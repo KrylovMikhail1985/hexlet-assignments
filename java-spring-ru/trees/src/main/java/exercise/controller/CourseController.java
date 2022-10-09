@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Arrays;
@@ -44,7 +45,9 @@ public class CourseController {
         try {
             parentsId = course.getPath().split("\\.");
         } catch (Exception e) {
-            return null;
+            List<Course> result = new ArrayList<>();
+            result.add(course);
+            return result;
         }
         List<Long> listIdOfPreviousCourses = Arrays.stream(parentsId)
                 .map((s) ->  Long.parseLong(s))
