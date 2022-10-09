@@ -31,7 +31,7 @@ public class CourseController {
     }
 
     // BEGIN
-    @GetMapping(path = "/{id}/previous/")
+    @GetMapping(path = "/{id}/previous")
     public List<Course> showAllCoursesBeforeThis(@PathVariable Long id) {
         Course course = new Course();
         try {
