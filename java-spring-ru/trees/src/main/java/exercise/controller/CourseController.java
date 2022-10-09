@@ -45,9 +45,7 @@ public class CourseController {
         try {
             parentsId = course.getPath().split("\\.");
         } catch (Exception e) {
-            List<Course> result = new ArrayList<>();
-            result.add(course);
-            return result;
+            return new ArrayList<>();
         }
         List<Long> listIdOfPreviousCourses = Arrays.stream(parentsId)
                 .map((s) ->  Long.parseLong(s))
