@@ -31,13 +31,22 @@ public class CourseController {
     }
 
     // BEGIN
-    private final String DOT_AS_STRING = "\\.";
     @GetMapping(path = "/{id}/previous/")
     public List<Course> showAllCoursesBeforeThis(@PathVariable Long id) {
-        Course course = courseRepository.findById(id).orElseThrow(
-                ()-> new RuntimeException("There is not course with id= " + id));
-        String[] str = course.getPath().split(DOT_AS_STRING);
-        List<Long> listIdOfPreviousCourses = Arrays.stream(course.getPath().split(DOT_AS_STRING))
+        Course course = new Course();
+        try {
+            course = courseRepository.findById(id).orElseThrow(
+                    () -> new RuntimeException("There is not course with id= " + id));
+        } catch (Exception e) {
+            return null;
+        }
+        String[] parentsId = null;
+        try {
+            parentsId = course.getPath().split("\\.");
+        } catch (Exception e) {
+            return null;
+        }
+        List<Long> listIdOfPreviousCourses = Arrays.stream(parentsId)
                 .map((s) ->  Long.parseLong(s))
                 .collect(Collectors.toList());
         System.out.println(listIdOfPreviousCourses);
