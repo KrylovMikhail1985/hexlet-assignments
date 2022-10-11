@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import exercise.model.User;
+
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +117,22 @@ public class AppTest {
 
     // Тест для дополнительной задачи
     // BEGIN
+    @Test
+    void getWithAllParametersTest() throws Exception {
+        MockHttpServletResponse response =
+                mockMvc.perform(get("/users" +
+                                "?firstName=Retha" +
+                                "&lastName=Astupenas" +
+                                "&email=rastupenas0" +
+                                "&gender=Female" +
+                                "&profession=Engineer"))
+                        .andReturn()
+                        .getResponse();
+        int status = response.getStatus();
+        assertThat(status).isEqualTo(200);
+        assertThat(response.getContentAsString()).contains("Astupenas");
 
+    }
     
     // END
 }
