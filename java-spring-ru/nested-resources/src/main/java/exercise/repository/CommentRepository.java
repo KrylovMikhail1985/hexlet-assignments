@@ -12,6 +12,6 @@ public interface CommentRepository extends CrudRepository<Comment, Long> {
     // BEGIN
     @Autowired
     Iterable<Comment> getAllCommentByPostId(long id);
-    Comment getCommentByIdAndPostId(long commentId, long postId);
+    Optional<Comment> getCommentByIdAndPostId(long commentId, long postId);
     // END
 }
