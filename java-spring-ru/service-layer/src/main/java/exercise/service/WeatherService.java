@@ -1,5 +1,7 @@
 package exercise.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import exercise.HttpClient;
 import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,8 +28,17 @@ public class WeatherService {
     }
 
     // BEGIN
-    public String showWeatherInTheCity(City city) {
-        return client.get("http://weather/api/v2/cities/" + city);
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    public Map<String, String> returnWeatherInTheCity(City city){
+
+        String response = client.get("http://weather/api/v2/cities/" + city);
+        try {
+            return objectMapper.readValue(response, new TypeReference<>() {
+            });
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+
     }
     // END
 }

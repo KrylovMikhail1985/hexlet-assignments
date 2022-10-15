@@ -30,41 +30,44 @@ public class CityController {
     private WeatherService weatherService;
 
     // BEGIN
-    private ObjectMapper objectMapper = new ObjectMapper();
-
     @GetMapping("/cities/{id}")
-    public Map<String, Object> showCityAndWeather(@PathVariable(name = "id") long id) throws JsonProcessingException {
+    public Map<String, String> showCityAndWeather(@PathVariable(name = "id") long id) throws JsonProcessingException {
         String nameOfTheCity = cityRepository.findById(id).orElseThrow(
                 ()-> new CityNotFoundException("City not found"))
                 .getName();
-        Map<String, Object> result = weatherOfTheCity(cityRepository.findById(id).orElseThrow());
+        Map<String, String> result = weatherService.returnWeatherInTheCity(cityRepository.findById(id).orElseThrow());
         result.replace("name", nameOfTheCity);
-
         return result;
     }
     @GetMapping("/search")
     public List<Map<String, String>> showAllCitiesWithTemperatures(@RequestParam(value = "name", required = false) String str) throws JsonProcessingException {
-        List<Map<String, String>> result = new ArrayList<>();
+
         List<City> listOfCities;
         if (str == null) {
             listOfCities = cityRepository.findAllByOrderByName();
         } else {
             listOfCities = cityRepository.findByNameStartingWithIgnoreCase(str);
         }
-        for (City city: listOfCities) {
-            Map<String, Object> weather = weatherOfTheCity(city);
-            String temperature = weather.get("temperature").toString();
-            Map<String, String> map = new HashMap<>();
-            map.put("temperature", temperature);
-            map.put("name", city.getName());
-            result.add(map);
-        }
+
+        List<Map<String, String>> result;
+//        for (City city: listOfCities) {
+//            Map<String, String> weather = weatherService.returnWeatherInTheCity(city);
+//            String temperature = weather.get("temperature");
+//
+//            Map<String, String> map = new HashMap<>();
+//            map.put("temperature", temperature);
+//            map.put("name", city.getName());
+//            result.add(map);
+//        }
+        result = listOfCities.stream()
+                .map(city -> {
+                    Map<String, String> weather = weatherService.returnWeatherInTheCity(city);
+                    return Map.of(
+                            "temperature", weather.get("temperature"),
+                            "name", city.getName()
+                    );
+                }).toList();
         return result;
-    }
-    private Map<String, Object> weatherOfTheCity(City city) throws JsonProcessingException {
-        String weatherOfTheCity = weatherService.showWeatherInTheCity(city);
-        return objectMapper.readValue(weatherOfTheCity, new TypeReference<>() {
-        });
     }
     // END
 }
