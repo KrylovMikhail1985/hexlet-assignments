@@ -68,11 +68,9 @@ public class AppTest {
         assertThat(responsePost.getStatus()).isEqualTo(200);
         assertThat(userRepository.existsByName("Tirion")).isTrue();
         List<Message> receivedMessages = server.getAllReceivedMessages(key);
-        System.out.println("===========");
-        System.out.println(receivedMessages.toString());
-//        assertThat(receivedMessages.size()).isEqualTo(1);
-//        String message = new String(receivedMessages.get(0).getBody());
-//        assertThat(message).isEqualTo("User Tirion has been registered");
+        assertThat(receivedMessages.size()).isEqualTo(1);
+        String message = new String(receivedMessages.get(0).getBody());
+        assertThat(message).isEqualTo("User Tirion has been registered");
     }
 
     @Test
@@ -85,9 +83,9 @@ public class AppTest {
         assertThat(responsePost.getStatus()).isEqualTo(200);
         assertThat(userRepository.existsById(1L)).isFalse();
 
-//        List<Message> receivedMessages = server.getAllReceivedMessages(key);
-//        assertThat(receivedMessages.size()).isEqualTo(2);
-//        String message = new String(receivedMessages.get(1).getBody());
-//        assertThat(message).isEqualTo("User Jack has been deleted");
+        List<Message> receivedMessages = server.getAllReceivedMessages(key);
+        assertThat(receivedMessages.size()).isEqualTo(2);
+        String message = new String(receivedMessages.get(1).getBody());
+        assertThat(message).isEqualTo("User Jack has been deleted");
     }
 }

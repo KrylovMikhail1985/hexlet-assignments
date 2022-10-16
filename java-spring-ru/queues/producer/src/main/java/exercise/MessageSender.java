@@ -24,7 +24,7 @@ public class MessageSender {
         // Отправляем сообщение в обменник с ключом "key"
         // В зависимости от ключа, сообщение будет отправлено в нужную очередь
         LOGGER.info("Sending message to the queue...");
-        rabbitTemplate.convertAndSend("exchange", "exchange.key", message);
+        rabbitTemplate.convertAndSend("exchange", "key", message);
         LOGGER.info("Message sent successfully to the queue!!!");
     }
     // END
