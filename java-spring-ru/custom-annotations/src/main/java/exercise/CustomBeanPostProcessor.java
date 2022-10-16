@@ -36,8 +36,16 @@ public class CustomBeanPostProcessor implements BeanPostProcessor {
         }
         Class beanClass = annotatedBeans.get(beanName);
         String level = loggingLevels.get(beanName);
-
-        return Proxy.newProxyInstance(beanClass.getClassLoader(), beanClass.getInterfaces(), (proxy, method, args) -> {
+// Обернём в прокси
+// Метод newProxyInstance() создаёт новый экземпляр прокси
+// На вход принимает getClassLoader для класса, массив реализуемых интерфейсов и обработчик вызова
+        return Proxy.newProxyInstance(
+                beanClass.getClassLoader(),
+                beanClass.getInterfaces(),
+                // Лямбда - обработчик вызова
+                // В качестве аргумента принимает сам объект прокси, метод, к которому происходит обращение
+                // и массив аргументов, переданных при вызове
+                (proxy, method, args) -> {
                     String message = String.format(
                             "Was called method: %s() with arguments: %s",
                             method.getName(),
