@@ -16,38 +16,43 @@ import org.slf4j.LoggerFactory;
 // BEGIN
 @Component
 public class CustomBeanPostProcessor implements BeanPostProcessor {
-    Object targetBean;
-    String level;
+    private Map<String, Class> annotatedBeans = new HashMap<>();
+    private Map<String, String> loggingLevels = new HashMap<>();
     private static final Logger LOGGER = LoggerFactory.getLogger(Object.class);
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         if (bean.getClass().isAnnotationPresent(Inspect.class)) {
-            targetBean = bean;
-            level = bean.getClass().getAnnotation(Inspect.class).level();
+            String level = bean.getClass().getAnnotation(Inspect.class).level();
+            annotatedBeans.put(beanName, bean.getClass());
+            loggingLevels.put(beanName, level);
         }
        return bean;
-//        return BeanPostProcessor.super.postProcessBeforeInitialization(bean, beanName);
     }
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        if (bean.getClass().isAnnotationPresent(Inspect.class))  {
-            if (level.equals("info")) {
-                System.out.println("Was called method: sum() with arguments: [5, 10]" +
-                        "Was called method: mult() with arguments: [5, 10] " +
-                        "Was called method: sum() with arguments: [3, 4]");
-            } else if (level.equals("debug")) {
-                System.out.println("Was called method: sum() with arguments: [5, 10]" +
-                        "Was called method: mult() with arguments: [5, 10]" +
-                        "Was called method: sum() with arguments: [3, 4]");
-            } else {
-                throw new RuntimeException(
-                        "Log level " + level + " is not correct. You should chose \"info\" or \"debug\"");
-            }
-
+        if (!annotatedBeans.containsKey(beanName)) {
+            return bean;
         }
-        return bean;
-//        return BeanPostProcessor.super.postProcessAfterInitialization(bean, beanName);
+        Class beanClass = annotatedBeans.get(beanName);
+        String level = loggingLevels.get(beanName);
+
+        return Proxy.newProxyInstance(beanClass.getClassLoader(), beanClass.getInterfaces(), (proxy, method, args) -> {
+                    String message = String.format(
+                            "Was called method: %s() with arguments: %s",
+                            method.getName(),
+                            Arrays.toString(args)
+                    );
+
+                    if (level.equals("info")) {
+                        LOGGER.info(message);
+                    } else {
+                        LOGGER.debug(message);
+                    }
+
+                    return method.invoke(bean, args);
+                }
+        );
     }
 }
 // END

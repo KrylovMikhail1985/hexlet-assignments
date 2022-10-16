@@ -62,19 +62,19 @@ public class AppTest {
         // Проверяем, что методы исходного класса калькулятора не содержат логгирование
         Calculator initialCalc = new CalculatorImpl();
         initialCalc.sum(3, 4);
-//        assertThat(output).doesNotContain("Was called method: sum() with arguments: [3, 4]");
+        assertThat(output).doesNotContain("Was called method: sum() with arguments: [3, 4]");
 
         initialCalc.mult(3, 4);
-//        assertThat(output).doesNotContain("Was called method: mult() with arguments: [3, 4]");
+        assertThat(output).doesNotContain("Was called method: mult() with arguments: [3, 4]");
 
         // Получаем бин калькулятор из контекста приложения
         Calculator calculatorInContext = ctx.getBean(Calculator.class);
 
         // Проверяем, что при вызове его методов происходит логгирование
         calculatorInContext.sum(3, 4);
-//        assertThat(output).contains("Was called method: sum() with arguments: [3, 4]");
+        assertThat(output).contains("Was called method: sum() with arguments: [3, 4]");
 
         calculatorInContext.mult(4, 5);
-//        assertThat(output).contains("Was called method: mult() with arguments: [4, 5]");
+        assertThat(output).contains("Was called method: mult() with arguments: [4, 5]");
     }
 }
